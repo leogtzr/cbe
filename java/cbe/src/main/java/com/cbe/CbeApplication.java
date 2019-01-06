@@ -9,4 +9,3 @@ public class CbeApplication {
 		SpringApplication.run(CbeApplication.class, args);
 	}
 }
-
