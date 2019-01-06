@@ -20,6 +20,8 @@ const (
 
 	userEnvVar     = "CBE_USER"
 	passwordEnvVar = "CBE_PASSWORD"
+
+	enterYourUserNamePassword = "Please enter your username and password"
 )
 
 var (
@@ -37,7 +39,7 @@ type Person struct {
 	Age  string
 }
 
-func renderTemplate(w http.ResponseWriter, r *http.Request) {
+func homePage(w http.ResponseWriter, r *http.Request) {
 	person := Person{Age: "1", Name: "Foo"}
 	parsedTemplates, _ := template.ParseFiles("templates/index.html")
 	err := parsedTemplates.Execute(w, person)
@@ -48,7 +50,13 @@ func renderTemplate(w http.ResponseWriter, r *http.Request) {
 }
 
 func personasPage(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("hello ... "))
+	person := Person{Age: "1", Name: "Foo"}
+	parsedTemplates, _ := template.ParseFiles("templates/personas.html")
+	err := parsedTemplates.Execute(w, person)
+	if err != nil {
+		log.Print("Error occurred while executing the template or writing its output: ", err)
+		return
+	}
 }
 
 // BasicAuth ...
@@ -82,9 +90,9 @@ func init() {
 func main() {
 
 	router := mux.NewRouter()
-	router.HandleFunc("/", BasicAuth(renderTemplate, "Please enter your username and password"))
 
-	router.HandleFunc("/personas", BasicAuth(personasPage, "Please enter your username and password"))
+	router.HandleFunc("/", BasicAuth(homePage, enterYourUserNamePassword))
+	router.HandleFunc("/personas", BasicAuth(personasPage, enterYourUserNamePassword))
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("static/"))))
 	err := http.ListenAndServe(connHost+":"+connPort, router)
