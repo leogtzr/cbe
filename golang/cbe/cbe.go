@@ -66,7 +66,7 @@ func BasicAuth(handler http.HandlerFunc, realm string) http.HandlerFunc {
 		if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(cbeUser)) != 1 ||
 			subtle.ConstantTimeCompare([]byte(pass), []byte(cbePassword)) != 1 {
 			w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`"`)
-			w.WriteHeader(401)
+			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("You are Unauthorized to access the application.\n"))
 			return
 		}
