@@ -5,6 +5,7 @@ package main
 
 import (
 	"crypto/subtle"
+	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
@@ -22,16 +23,46 @@ const (
 	passwordEnvVar   = "CBE_PASSWORD"
 	userDBEnvVar     = "DB_USER"
 	passwordDBEnvVar = "DB_PASSWORD"
+	dbNameEnvVar     = "DB_NAME"
+	driverName       = "mysql"
 
 	enterYourUserNamePassword = "Please enter your username and password"
 )
 
+// Route ...
+type Route struct {
+	Name        string
+	Method      string
+	Pattern     string
+	HandlerFunc http.HandlerFunc
+}
+
+// Routes ...
+type Routes []Route
+
 var (
 	cbeUser     string
 	cbePassword string
+	// DB variables:
+	dbUser     string
+	dbPassword string
+	dbName     string
+
+	db              *sql.DB
+	connectionError error
+
+	routes = Routes{
+		Route{
+			"getPersonTypes",
+			"GET",
+			"/persontypes",
+			helloWorld,
+		},
+	}
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
+
 	fmt.Fprintf(w, "Hello World")
 }
 
@@ -90,20 +121,52 @@ func init() {
 	}
 
 	if user, isSet := os.LookupEnv(userDBEnvVar); isSet {
-		cbeUser = user
+		dbUser = user
 	} else {
 		log.Fatalf("%s env variable not set.", userDBEnvVar)
 	}
+	if password, isSet := os.LookupEnv(passwordDBEnvVar); isSet {
+		dbPassword = password
+	} else {
+		log.Fatalf("%s env variable not set.", passwordDBEnvVar)
+	}
+
 	if password, isSet := os.LookupEnv(passwordDBEnvVar); isSet {
 		cbePassword = password
 	} else {
 		log.Fatalf("%s env variable not set.", passwordDBEnvVar)
 	}
+
+	if db, isSet := os.LookupEnv(dbNameEnvVar); isSet {
+		dbName = db
+	} else {
+		log.Fatalf("%s env variable not set.", dbNameEnvVar)
+	}
+
+	db, connectionError = sql.Open(driverName, fmt.Sprintf("%s:%s@/%s", dbUser, dbPassword, dbName))
+	if connectionError != nil {
+		log.Fatal("error connecting to database :: ", connectionError)
+	}
+}
+
+func addRoutes(router *mux.Router) *mux.Router {
+	for _, route := range routes {
+		router.Methods(route.Method).
+			Path(route.Pattern).
+			Name(route.Name).
+			Handler(route.HandlerFunc)
+
+	}
+
+	return router
 }
 
 func main() {
 
 	router := mux.NewRouter()
+	router = addRoutes(router)
+
+	defer db.Close()
 
 	router.HandleFunc("/", BasicAuth(homePage, enterYourUserNamePassword))
 	router.HandleFunc("/personas", BasicAuth(personasPage, enterYourUserNamePassword))
