@@ -1,0 +1,11 @@
+SELECT p.name, pt.type
+FROM person p
+INNER JOIN person_type pt ON p.type = pt.id;
+
+insert into interaction (comment, date, person_id) values('Hello', date(now()), 1);
+
+select p.name, pt.type, inter.date, inter.comment
+FROM interaction inter
+inner join person p on p.id = inter.person_id
+inner join person_type pt on pt.id = inter.person_id;
+

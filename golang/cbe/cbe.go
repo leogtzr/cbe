@@ -95,6 +95,7 @@ func main() {
 	router.HandleFunc("/personas", BasicAuth(personasPage, enterYourUserNamePassword))
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("static/"))))
+
 	err := http.ListenAndServe(connHost+":"+connPort, router)
 	if err != nil {
 		log.Fatal("error starting http server: ", err)
