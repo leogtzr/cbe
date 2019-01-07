@@ -18,8 +18,10 @@ const (
 	connHost = "localhost"
 	connPort = "8080"
 
-	userEnvVar     = "CBE_USER"
-	passwordEnvVar = "CBE_PASSWORD"
+	userEnvVar       = "CBE_USER"
+	passwordEnvVar   = "CBE_PASSWORD"
+	userDBEnvVar     = "DB_USER"
+	passwordDBEnvVar = "DB_PASSWORD"
 
 	enterYourUserNamePassword = "Please enter your username and password"
 )
@@ -75,6 +77,7 @@ func BasicAuth(handler http.HandlerFunc, realm string) http.HandlerFunc {
 }
 
 func init() {
+	// check if the necessary env variables are set:
 	if user, isSet := os.LookupEnv(userEnvVar); isSet {
 		cbeUser = user
 	} else {
@@ -84,6 +87,17 @@ func init() {
 		cbePassword = password
 	} else {
 		log.Fatalf("%s env variable not set.", passwordEnvVar)
+	}
+
+	if user, isSet := os.LookupEnv(userDBEnvVar); isSet {
+		cbeUser = user
+	} else {
+		log.Fatalf("%s env variable not set.", userDBEnvVar)
+	}
+	if password, isSet := os.LookupEnv(passwordDBEnvVar); isSet {
+		cbePassword = password
+	} else {
+		log.Fatalf("%s env variable not set.", passwordDBEnvVar)
 	}
 }
 
