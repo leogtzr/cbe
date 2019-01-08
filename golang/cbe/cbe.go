@@ -6,12 +6,14 @@ package main
 import (
 	"crypto/subtle"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -56,13 +58,30 @@ var (
 			"getPersonTypes",
 			"GET",
 			"/persontypes",
-			helloWorld,
+			BasicAuth(personTypes, enterYourUserNamePassword),
 		},
 	}
 )
 
-func helloWorld(w http.ResponseWriter, r *http.Request) {
+func personTypes(w http.ResponseWriter, r *http.Request) {
 
+	types := []string{}
+
+	rows, err := db.Query("SELECT type from person_type")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var tp string
+	for rows.Next() {
+		rows.Scan(&tp)
+		types = append(types, tp)
+	}
+
+	json.NewEncoder(w).Encode(types)
+}
+
+func helloWorld(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World")
 }
 
