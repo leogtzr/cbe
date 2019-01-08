@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var persons = $('#persons');
+    var persons = $('#persontypes');
     // REST call ... 
     if (persons.length) {
         $.ajax({
@@ -9,7 +9,7 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#persons').append($('<option>').append(types[i]));
+                    $('#persontypes').append($('<option>').append(types[i]));
                 }
             },
             error: function(data) {
@@ -19,8 +19,14 @@ $(document).ready(function () {
     }
 
     $('#addperson').on('submit', function(e) {
+
+        var currentForm = this;
         e.preventDefault();
-        console.log('Hello!');
+        var name = $('#person_name').val();
+        var personType = $('#persontypes').val();
+
+        console.log('Hello!: ' + name + ", your type is: " + personType);
+
     });
 
 });
