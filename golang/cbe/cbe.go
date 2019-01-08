@@ -67,7 +67,7 @@ func personTypes(w http.ResponseWriter, r *http.Request) {
 
 	types := []string{}
 
-	rows, err := db.Query("SELECT type from person_type")
+	rows, err := db.Query("SELECT type FROM person_type")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
