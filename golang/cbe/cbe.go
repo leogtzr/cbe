@@ -73,17 +73,20 @@ var (
 
 func getPersonTypes(w http.ResponseWriter, r *http.Request) {
 
-	types := []string{}
+	types := []struct {
+		ID   string
+		Type string
+	}{}
 
-	rows, err := db.Query("SELECT type FROM person_type")
+	rows, err := db.Query("SELECT id, type FROM person_type")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var tp string
+	var tp, id string
 	for rows.Next() {
-		rows.Scan(&tp)
-		types = append(types, tp)
+		rows.Scan(&tp, &id)
+		types = append(types, struct{ ID, Type string }{tp, id})
 	}
 
 	json.NewEncoder(w).Encode(types)

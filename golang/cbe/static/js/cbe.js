@@ -12,7 +12,7 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#persontypes').append($('<option>').append(types[i]));
+                    $('#persontypes').append($('<option name="' + types[i].Id + '">').append(types[i].Type));
                 }
             },
             error: function(data) {
