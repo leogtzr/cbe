@@ -16,3 +16,19 @@ insert into person_type (type) values('Trabajo');
 insert into person (name, type) values('Mamá', 1);
 
 insert into interaction (comment, date, person_id) values('Hello', date(now()), 1);
+
+select p.name, pt.type,inter.date, inter.comment
+FROM interaction inter
+inner join person p on p.id = inter.person_id
+inner join person_type pt on pt.id = p.type;
+
+select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+FROM interaction inter
+inner join person p on p.id = inter.person_id
+inner join person_type pt on pt.id = p.type;
+
+select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+FROM interaction inter
+inner join person p on p.id = inter.person_id
+inner join person_type pt on pt.id = p.type
+where p.type = 1;
