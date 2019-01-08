@@ -9,3 +9,8 @@ FROM interaction inter
 inner join person p on p.id = inter.person_id
 inner join person_type pt on pt.id = inter.person_id;
 
+insert into person_type (type) values('Familia');
+insert into person_type (type) values('Amigo');
+insert into person_type (type) values('Trabajo');
+
+insert into person (name, type) values('Mamá', 1);

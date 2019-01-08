@@ -81,10 +81,6 @@ func personTypes(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(types)
 }
 
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World")
-}
-
 // Person ...
 type Person struct {
 	Name string
