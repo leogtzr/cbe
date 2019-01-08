@@ -118,6 +118,7 @@ func BasicAuth(handler http.HandlerFunc, realm string) http.HandlerFunc {
 			w.Write([]byte("You are Unauthorized to access the application.\n"))
 			return
 		}
+
 		handler(w, r)
 	}
 }
@@ -142,12 +143,6 @@ func init() {
 	}
 	if password, isSet := os.LookupEnv(passwordDBEnvVar); isSet {
 		dbPassword = password
-	} else {
-		log.Fatalf("%s env variable not set.", passwordDBEnvVar)
-	}
-
-	if password, isSet := os.LookupEnv(passwordDBEnvVar); isSet {
-		cbePassword = password
 	} else {
 		log.Fatalf("%s env variable not set.", passwordDBEnvVar)
 	}
