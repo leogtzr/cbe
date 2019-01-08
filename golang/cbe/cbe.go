@@ -111,11 +111,19 @@ func readForm(r *http.Request) *PersonPayload {
 }
 
 func addPerson(w http.ResponseWriter, r *http.Request) {
-
 	person := readForm(r)
 
-	fmt.Println(person.Name)
-	fmt.Println(person.Type)
+	stmt, err := db.Prepare("INSERT INTO person (name, type) values(?, ?)")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(person.Name, person.Type)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(person)
 }
