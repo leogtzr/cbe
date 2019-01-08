@@ -1,4 +1,7 @@
 $(document).ready(function () {
+
+    $('#alert').hide();
+
     var persons = $('#persontypes');
     // REST call ... 
     if (persons.length) {
@@ -26,6 +29,22 @@ $(document).ready(function () {
         var personType = $('#persontypes').val();
 
         console.log('Hello!: ' + name + ", your type is: " + personType);
+        console.log({name: name, type: personType});
+
+        $.ajax({
+            url: '/addperson',
+            type: 'POST',
+            data: {name: name, type: personType},
+            success: function(data) {
+                $("#alert").fadeTo(1000, 500).slideUp(500, function() {
+                    $("#alert").slideUp(500);
+                });
+            },
+            error: function(data) {
+                // TODO: Show alert ... 
+                console.log(data);
+            }
+        });
 
     });
 

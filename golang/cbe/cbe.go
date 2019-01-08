@@ -15,6 +15,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 )
 
 const (
@@ -58,12 +59,19 @@ var (
 			"getPersonTypes",
 			"GET",
 			"/persontypes",
-			BasicAuth(personTypes, enterYourUserNamePassword),
+			BasicAuth(getPersonTypes, enterYourUserNamePassword),
+		},
+
+		Route{
+			"addPerson",
+			"POST",
+			"/addperson",
+			BasicAuth(addPerson, enterYourUserNamePassword),
 		},
 	}
 )
 
-func personTypes(w http.ResponseWriter, r *http.Request) {
+func getPersonTypes(w http.ResponseWriter, r *http.Request) {
 
 	types := []string{}
 
@@ -79,6 +87,34 @@ func personTypes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(types)
+}
+
+// PersonPayload ...
+type PersonPayload struct {
+	// data: {name: name, type: personType},
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
+func readForm(r *http.Request) *PersonPayload {
+	r.ParseForm()
+	person := new(PersonPayload)
+	decoder := schema.NewDecoder()
+	decodeErr := decoder.Decode(person, r.PostForm)
+	if decodeErr != nil {
+		log.Println("error mapping parsed form data to struct: ", decodeErr)
+	}
+	return person
+}
+
+func addPerson(w http.ResponseWriter, r *http.Request) {
+
+	person := readForm(r)
+
+	fmt.Println(person.Name)
+	fmt.Println(person.Type)
+
+	json.NewEncoder(w).Encode(person)
 }
 
 // Person ...
