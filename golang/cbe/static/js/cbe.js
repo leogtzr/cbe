@@ -17,4 +17,10 @@ $(document).ready(function () {
             }
         });
     }
+
+    $('#addperson').on('submit', function(e) {
+        e.preventDefault();
+        console.log('Hello!');
+    });
+
 });
