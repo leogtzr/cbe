@@ -56,7 +56,33 @@
     <div class="jumbotron">
         <div class="container">
             <h3>¿Quiénes son los que te importan?</h3>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+
+            <form method="post" id="addperson">
+                    <div class="form-group">
+                        <label for="persons">Quién</label>
+                        <select class="form-control" id="persons" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="interactiontext">Interacción</label>
+                        <textarea class="form-control" id="interactiontext" required></textarea>
+                    </div>
+
+                    <!-- <div class="alert alert-danger alert-dismissible fade show" role="alert" id="alert_error">
+                            <strong>Error agregando persona</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert">
+                         Agregado correctamente
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> -->
+
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
         </div>
     </div>
 
@@ -87,16 +113,15 @@
 </main>
 
 <footer class="container">
-    <p>&copy; Company 2019</p>
+    <p>&copy; CBE 2019</p>
 </footer>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-<script src="/static/js/popper.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/cbe.js"></script>
+    <script src="/static/js/popper.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/cbe.js"></script>
 </body>
 </html>

@@ -14,3 +14,5 @@ insert into person_type (type) values('Amigo');
 insert into person_type (type) values('Trabajo');
 
 insert into person (name, type) values('Mamá', 1);
+
+insert into interaction (comment, date, person_id) values('Hello', date(now()), 1);

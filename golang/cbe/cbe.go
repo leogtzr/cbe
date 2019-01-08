@@ -63,6 +63,13 @@ var (
 		},
 
 		Route{
+			"getPersons",
+			"GET",
+			"/persons",
+			BasicAuth(getPersons, enterYourUserNamePassword),
+		},
+
+		Route{
 			"addPerson",
 			"POST",
 			"/addperson",
@@ -70,6 +77,27 @@ var (
 		},
 	}
 )
+
+func getPersons(w http.ResponseWriter, r *http.Request) {
+
+	types := []struct {
+		ID   string
+		Name string
+	}{}
+
+	rows, err := db.Query("SELECT id, name FROM person")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var id, name string
+	for rows.Next() {
+		rows.Scan(&id, &name)
+		types = append(types, struct{ ID, Name string }{id, name})
+	}
+
+	json.NewEncoder(w).Encode(types)
+}
 
 func getPersonTypes(w http.ResponseWriter, r *http.Request) {
 
@@ -94,9 +122,14 @@ func getPersonTypes(w http.ResponseWriter, r *http.Request) {
 
 // PersonPayload ...
 type PersonPayload struct {
-	// data: {name: name, type: personType},
 	Name string `json:"name"`
 	Type string `json:"type"`
+}
+
+// InteractionPayload
+type InteractionPayload struct {
+	Comment string `json:"comment"`
+	Type    string `json:"type"`
 }
 
 func readForm(r *http.Request) *PersonPayload {
@@ -112,6 +145,7 @@ func readForm(r *http.Request) *PersonPayload {
 
 func addPerson(w http.ResponseWriter, r *http.Request) {
 	person := readForm(r)
+	fmt.Println("Going to add: ", person)
 
 	stmt, err := db.Prepare("INSERT INTO person (name, type) values(?, ?)")
 	if err != nil {
@@ -126,6 +160,32 @@ func addPerson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(person)
+	fmt.Println("Done ... ")
+}
+
+func addInteraction(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	interaction := new(InteractionPayload)
+	decoder := schema.NewDecoder()
+	decodeErr := decoder.Decode(interaction, r.PostForm)
+	if decodeErr != nil {
+		http.Error(w, decodeErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	stmt, err := db.Prepare("INSERT INTO interaction (comment, date, person_id) VALUES(?, date(now()), ?)")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(interaction.Type, interaction.Type)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(interaction)
 }
 
 // Person ...
@@ -214,7 +274,6 @@ func addRoutes(router *mux.Router) *mux.Router {
 			Handler(route.HandlerFunc)
 
 	}
-
 	return router
 }
 
