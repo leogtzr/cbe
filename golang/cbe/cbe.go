@@ -75,6 +75,13 @@ var (
 			"/addperson",
 			BasicAuth(addPerson, enterYourUserNamePassword),
 		},
+
+		Route{
+			"addInteraction",
+			"POST",
+			"/addinteraction",
+			BasicAuth(addInteraction, enterYourUserNamePassword),
+		},
 	}
 )
 
@@ -128,8 +135,8 @@ type PersonPayload struct {
 
 // InteractionPayload
 type InteractionPayload struct {
-	Comment string `json:"comment"`
-	Type    string `json:"type"`
+	Comment  string `json:"comment"`
+	PersonID string `json:"personId"`
 }
 
 func readForm(r *http.Request) *PersonPayload {
@@ -179,7 +186,7 @@ func addInteraction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(interaction.Type, interaction.Type)
+	_, err = stmt.Exec(interaction.Comment, interaction.PersonID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

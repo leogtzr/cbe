@@ -46,20 +46,45 @@ $(document).ready(function () {
         var name = $('#person_name').val();
         var personType = $('#persontypes').find(":selected").attr('name');
 
-        console.log("Here ... ");
-
         $.ajax({
             url: '/addperson',
             type: 'POST',
             data: {name: name, type: personType},
             success: function(data) {
                 console.log("Good");
+                name.val('');
                 $("#alert").fadeTo(2000, 500).slideUp(500, function() {
                     $("#alert").slideUp(500);
                 });
             },
             error: function(data) {
                 console.log("Error!");
+                $("#alert_error").fadeTo(2000, 500).slideUp(500, function() {
+                    $("#alert_error").slideUp(500);
+                });
+            }
+        });
+
+    });
+
+    $('#addinteraction').on('submit', function(e) {
+
+        var currentForm = this;
+        e.preventDefault();
+        var text = $('#interactiontext').val();
+        var personId = $('#persons').find(":selected").attr('name');
+
+        $.ajax({
+            url: '/addinteraction',
+            type: 'POST',
+            data: {personId: personId, comment: text},
+            success: function(data) {
+                text.val('');
+                $("#alert").fadeTo(2000, 500).slideUp(500, function() {
+                    $("#alert").slideUp(500);
+                });
+            },
+            error: function(data) {
                 $("#alert_error").fadeTo(2000, 500).slideUp(500, function() {
                     $("#alert_error").slideUp(500);
                 });
