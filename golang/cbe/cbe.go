@@ -70,6 +70,13 @@ var (
 		},
 
 		Route{
+			"getFamilyInteractions",
+			"GET",
+			"/familyinteractions",
+			BasicAuth(getFamilyInteractions, enterYourUserNamePassword),
+		},
+
+		Route{
 			"addPerson",
 			"POST",
 			"/addperson",
@@ -104,6 +111,31 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(types)
+}
+
+func getFamilyInteractions(w http.ResponseWriter, r *http.Request) {
+
+	interactions := []struct {
+		Person, Date, Comment string
+	}{}
+
+	rows, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+	FROM interaction inter
+	inner join person p on p.id = inter.person_id
+	inner join person_type pt on pt.id = p.type
+	where p.type = 1`)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var person, date, comment string
+	for rows.Next() {
+		rows.Scan(&person, &date, &comment)
+		interactions = append(interactions, struct{ Person, Date, Comment string }{person, date, comment})
+	}
+
+	json.NewEncoder(w).Encode(interactions)
 }
 
 func getPersonTypes(w http.ResponseWriter, r *http.Request) {
