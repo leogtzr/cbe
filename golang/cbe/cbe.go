@@ -154,24 +154,19 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 func getInteractionsPerType(personType int) ([]Interaction, error) {
 	interactions := []Interaction{}
 
-	stmt, err := db.Prepare(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+	stmt, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
 	FROM interaction inter
 	inner join person p on p.id = inter.person_id
 	inner join person_type pt on pt.id = p.type
-	where p.type = ?`)
+	where p.type = ?`, personType)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(personType)
-	if err != nil {
-		return nil, err
-	}
-
 	var person, date, comment string
 	for stmt.Next() {
-		rows.Scan(&person, &date, &comment)
+		stmt.Scan(&person, &date, &comment)
 		interactions = append(interactions, Interaction{Person: person, Date: date, Comment: comment})
 	}
 
