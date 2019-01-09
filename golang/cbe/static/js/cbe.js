@@ -51,8 +51,8 @@ $(document).ready(function () {
                     //$('#family').append($('<li name="1" class="list-group-item">').append(types[i]));
                     $('#family').append(
                         $('<li name="1" class="list-group-item">').append(
-                            $('<a>').attr('href','/user/messages').append(
-                                $('<span>').attr('class', 'badge badge-light').append(types[i])
+                            $('<a>').attr('href','/person/' + types[i].ID).append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Name)
                     )));
                 }
             },
@@ -75,8 +75,8 @@ $(document).ready(function () {
                     //$('#friends').append($('<li name="1" class="list-group-item">').append(types[i]));
                     $('#friends').append(
                         $('<li name="1" class="list-group-item">').append(
-                            $('<a>').attr('href','/user/messages').append(
-                                $('<span>').attr('class', 'badge badge-light').append(types[i])
+                            $('<a>').attr('href','/person/' + types[i].ID).append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Name)
                     )));
                 }
             },
@@ -99,8 +99,8 @@ $(document).ready(function () {
                     // $('#coworkers').append($('<li name="1" class="list-group-item">').append(types[i]));
                     $('#coworkers').append(
                         $('<li name="1" class="list-group-item">').append(
-                            $('<a>').attr('href','/user/messages').append(
-                                $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
+                            $('<a>').attr('href','/person/' + types[i].ID).append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Name)
                     )));
                     console.log("Persona: " + types[i]);
                 }
@@ -126,7 +126,7 @@ $(document).ready(function () {
                     comment = comment.substring(0, 20) + '...';
                     $('#family_interactions').append(
                         $('<li name="1" class="list-group-item">').append(
-                            $('<a>').attr('href','/user/messages').append(
+                            $('<a>').attr('href','/interaction/' + types[i].ID).append(
                                 $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
                     )));
                 }
@@ -152,7 +152,7 @@ $(document).ready(function () {
                     //$('#friend_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + comment));
                     $('#friend_interactions').append(
                         $('<li name="1" class="list-group-item">').append(
-                            $('<a>').attr('href','/user/messages').append(
+                            $('<a>').attr('href','/interaction/' + types[i].ID).append(
                                 $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
                     )));
                 }
@@ -178,7 +178,7 @@ $(document).ready(function () {
 
                     $('#coworkers_interactions').append(
                         $('<li name="1" class="list-group-item">').append(
-                            $('<a>').attr('href','/user/messages').append(
+                            $('<a>').attr('href','/interaction/' + types[i].ID).append(
                                 $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
                     )));
                     console.log("Persona: " + types[i]);

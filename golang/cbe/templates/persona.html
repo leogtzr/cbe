@@ -62,33 +62,21 @@
                 <div class="row">
 
                     <div class="col-lg-8">
-                        <h3>¿Quiénes son los que más te importan?</h3>
-                        <form method="post" id="addperson">
-                            <div class="form-group">
-                                <label for="person_name">Nombre</label>
-                                <input type="text" class="form-control" id="person_name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="persontypes">Tipo (familiar, amigo, trabajo, etc ...)</label>
-                                <select class="form-control" id="persontypes" required></select>
-                            </div>
-
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="alert_error">
-                                    <strong>Error agregando persona</strong>
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-
-                            <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert">
-                                 Agregado correctamente
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Agregar</button>
-                        </form>
+                        
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Tipo</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{{.Name}}</td>
+                                <td>{{.TypeName}}</td>
+                              </tr>
+                            </tbody>
+                          </table>
 
                     </div>
 
