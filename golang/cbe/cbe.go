@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -116,6 +117,13 @@ var (
 		},
 
 		Route{
+			"getPersonsPerType",
+			"GET",
+			"/personspertype/{type}",
+			BasicAuth(getPersonsPerType, enterYourUserNamePassword),
+		},
+
+		Route{
 			"addPerson",
 			"POST",
 			"/addperson",
@@ -152,6 +160,24 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(types)
 }
 
+func getPersonsPerType(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	arg := vars["type"]
+
+	personType, err := strconv.Atoi(arg)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	persons, err := personsPerType(personType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(persons)
+}
+
 func getInteractionsPerType(personType int) ([]Interaction, error) {
 	interactions := []Interaction{}
 
@@ -174,7 +200,7 @@ func getInteractionsPerType(personType int) ([]Interaction, error) {
 	return interactions, nil
 }
 
-func getPersonsPerType(personType int) ([]string, error) {
+func personsPerType(personType int) ([]string, error) {
 	persons := []string{}
 
 	stmt, err := db.Query(`select distinct(p.name)
@@ -381,7 +407,7 @@ func addRoutes(router *mux.Router) *mux.Router {
 
 func main() {
 
-	router := mux.NewRouter()
+	router := mux.NewRouter().StrictSlash(false)
 	router = addRoutes(router)
 
 	defer db.Close()

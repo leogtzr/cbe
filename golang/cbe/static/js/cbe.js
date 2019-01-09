@@ -39,6 +39,26 @@ $(document).ready(function () {
         });
     }
 
+    var familyInteractions = $('#family_interactions');
+    if (familyInteractions.length) {
+        $.ajax({
+            url: '/personspertype/1',
+            type: 'GET',
+            data: {},
+            success: function(data) {
+                var types = JSON.parse(data);
+                for (i = 0; i < types.length; i++) {
+                    $('#family_interactions').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    console.log("Persona: " + types[i]);
+                }
+            },
+            error: function(data) {
+                console.log(data)
+                console.log('woops! :(' + data + ", not able to get types");
+            }
+        });
+    }
+
     $('#addperson').on('submit', function(e) {
 
         var currentForm = this;
