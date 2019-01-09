@@ -48,7 +48,12 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#family').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    //$('#family').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    $('#family').append(
+                        $('<li name="1" class="list-group-item">').append(
+                            $('<a>').attr('href','/user/messages').append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i])
+                    )));
                 }
             },
             error: function(data) {
@@ -67,7 +72,12 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#friends').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    //$('#friends').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    $('#friends').append(
+                        $('<li name="1" class="list-group-item">').append(
+                            $('<a>').attr('href','/user/messages').append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i])
+                    )));
                 }
             },
             error: function(data) {
@@ -86,7 +96,12 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#coworkers').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    // $('#coworkers').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    $('#coworkers').append(
+                        $('<li name="1" class="list-group-item">').append(
+                            $('<a>').attr('href','/user/messages').append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
+                    )));
                     console.log("Persona: " + types[i]);
                 }
             },
@@ -107,7 +122,13 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#family_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + types[i].Comment));
+                    var comment = types[i].Comment;
+                    comment = comment.substring(0, 20) + '...';
+                    $('#family_interactions').append(
+                        $('<li name="1" class="list-group-item">').append(
+                            $('<a>').attr('href','/user/messages').append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
+                    )));
                 }
             },
             error: function(data) {
@@ -126,7 +147,14 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#friend_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + types[i].Comment));
+                    var comment = types[i].Comment;
+                    comment = comment.substring(0, 20) + '...';
+                    //$('#friend_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + comment));
+                    $('#friend_interactions').append(
+                        $('<li name="1" class="list-group-item">').append(
+                            $('<a>').attr('href','/user/messages').append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
+                    )));
                 }
             },
             error: function(data) {
@@ -145,7 +173,14 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#coworkers_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + types[i].Comment));
+                    var comment = types[i].Comment;
+                    comment = comment.substring(0, 20) + '...';
+
+                    $('#coworkers_interactions').append(
+                        $('<li name="1" class="list-group-item">').append(
+                            $('<a>').attr('href','/user/messages').append(
+                                $('<span>').attr('class', 'badge badge-light').append(types[i].Person + ' on ' + types[i].Date + ' ' + comment)
+                    )));
                     console.log("Persona: " + types[i]);
                 }
             },
