@@ -39,8 +39,8 @@ $(document).ready(function () {
         });
     }
 
-    var familyInteractions = $('#family_interactions');
-    if (familyInteractions.length) {
+    var family = $('#family');
+    if (family.length) {
         $.ajax({
             url: '/personspertype/1',
             type: 'GET',
@@ -48,16 +48,114 @@ $(document).ready(function () {
             success: function(data) {
                 var types = JSON.parse(data);
                 for (i = 0; i < types.length; i++) {
-                    $('#family_interactions').append($('<li name="1" class="list-group-item">').append(types[i]));
+                    $('#family').append($('<li name="1" class="list-group-item">').append(types[i]));
+                }
+            },
+            error: function(data) {
+                console.log('woops! :(');
+                console.log(data);
+            }
+        });
+    }
+
+    var friends = $('#friends');
+    if (friends.length) {
+        $.ajax({
+            url: '/personspertype/2',
+            type: 'GET',
+            data: {},
+            success: function(data) {
+                var types = JSON.parse(data);
+                for (i = 0; i < types.length; i++) {
+                    $('#friends').append($('<li name="1" class="list-group-item">').append(types[i]));
+                }
+            },
+            error: function(data) {
+                console.log('woops! :(');
+                console.log(data);
+            }
+        });
+    }
+
+    var coworkers = $('#coworkers');
+    if (coworkers.length) {
+        $.ajax({
+            url: '/personspertype/3',
+            type: 'GET',
+            data: {},
+            success: function(data) {
+                var types = JSON.parse(data);
+                for (i = 0; i < types.length; i++) {
+                    $('#coworkers').append($('<li name="1" class="list-group-item">').append(types[i]));
                     console.log("Persona: " + types[i]);
                 }
             },
             error: function(data) {
-                console.log(data)
-                console.log('woops! :(' + data + ", not able to get types");
+                console.log('woops! :(');
+                console.log(data);
             }
         });
     }
+
+    // ~~~~~~~~~~~~~~~~~~~~ Interactions ... 
+    var familyInteractions = $('#family_interactions');
+    if (familyInteractions.length) {
+        $.ajax({
+            url: '/familyinteractions',
+            type: 'GET',
+            data: {},
+            success: function(data) {
+                var types = JSON.parse(data);
+                for (i = 0; i < types.length; i++) {
+                    $('#family_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + types[i].Comment));
+                }
+            },
+            error: function(data) {
+                console.log('woops! :(');
+                console.log(data);
+            }
+        });
+    }
+
+    var friendInteractions = $('#friend_interactions');
+    if (friendInteractions.length) {
+        $.ajax({
+            url: '/friendinteractions',
+            type: 'GET',
+            data: {},
+            success: function(data) {
+                var types = JSON.parse(data);
+                for (i = 0; i < types.length; i++) {
+                    $('#friend_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + types[i].Comment));
+                }
+            },
+            error: function(data) {
+                console.log('woops! :(');
+                console.log(data);
+            }
+        });
+    }
+
+    var coworkersInteractions = $('#coworkers_interactions');
+    if (coworkersInteractions.length) {
+        $.ajax({
+            url: '/coworkersinteractions',
+            type: 'GET',
+            data: {},
+            success: function(data) {
+                var types = JSON.parse(data);
+                for (i = 0; i < types.length; i++) {
+                    $('#coworkers_interactions').append($('<li name="1" class="list-group-item">').append(types[i].Person + ' ' + types[i].Comment));
+                    console.log("Persona: " + types[i]);
+                }
+            },
+            error: function(data) {
+                console.log('woops! :(');
+                console.log(data);
+            }
+        });
+    }
+    // ~~~~~~~~~~~~~~~~~~~~ Interactions ... 
 
     $('#addperson').on('submit', function(e) {
 
@@ -99,7 +197,7 @@ $(document).ready(function () {
             type: 'POST',
             data: {personId: personId, comment: text},
             success: function(data) {
-                text.val('');
+                $('#interactiontext').val('');
                 $("#alert").fadeTo(2000, 500).slideUp(500, function() {
                     $("#alert").slideUp(500);
                 });

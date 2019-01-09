@@ -38,4 +38,3 @@ select distinct(p.name)
 FROM person p
 inner join person_type pt on pt.id = p.type
 where p.type = 1;
-;
