@@ -173,81 +173,55 @@ func getInteractionsPerType(personType int) ([]Interaction, error) {
 	return interactions, nil
 }
 
-func getFamilyInteractions(w http.ResponseWriter, r *http.Request) {
+func getPersonsPerType(personType int) ([]string, error) {
+	persons := []string{}
 
-	interactions := []Interaction{}
-
-	rows, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
-	FROM interaction inter
-	inner join person p on p.id = inter.person_id
+	stmt, err := db.Query(`select distinct(p.name)
+	FROM person p
 	inner join person_type pt on pt.id = p.type
-	where p.type = 1`)
+	where p.type = ?`, personType)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	var name string
+	for stmt.Next() {
+		stmt.Scan(&name)
+		persons = append(persons, name)
+	}
+
+	return persons, nil
+}
+
+func getFamilyInteractions(w http.ResponseWriter, r *http.Request) {
+	interactions, err := getInteractionsPerType(1)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	var person, date, comment string
-	for rows.Next() {
-		rows.Scan(&person, &date, &comment)
-		interactions = append(interactions, Interaction{Person: person, Date: date, Comment: comment})
-	}
-
 	json.NewEncoder(w).Encode(interactions)
 }
 
 func getCoworkersInteractions(w http.ResponseWriter, r *http.Request) {
-
-	interactions := []struct {
-		Person, Date, Comment string
-	}{}
-
-	rows, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
-	FROM interaction inter
-	inner join person p on p.id = inter.person_id
-	inner join person_type pt on pt.id = p.type
-	where p.type = 1`)
+	interactions, err := getInteractionsPerType(3)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	var person, date, comment string
-	for rows.Next() {
-		rows.Scan(&person, &date, &comment)
-		interactions = append(interactions, struct{ Person, Date, Comment string }{person, date, comment})
-	}
-
 	json.NewEncoder(w).Encode(interactions)
 }
 
 func getFriendInteractions(w http.ResponseWriter, r *http.Request) {
-
-	interactions := []struct {
-		Person, Date, Comment string
-	}{}
-
-	rows, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
-	FROM interaction inter
-	inner join person p on p.id = inter.person_id
-	inner join person_type pt on pt.id = p.type
-	where p.type = 1`)
+	interactions, err := getInteractionsPerType(2)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	var person, date, comment string
-	for rows.Next() {
-		rows.Scan(&person, &date, &comment)
-		interactions = append(interactions, struct{ Person, Date, Comment string }{person, date, comment})
-	}
-
 	json.NewEncoder(w).Encode(interactions)
 }
 
 func getPersonTypes(w http.ResponseWriter, r *http.Request) {
-
 	types := []struct {
 		ID   string
 		Type string

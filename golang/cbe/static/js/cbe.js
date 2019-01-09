@@ -52,7 +52,7 @@ $(document).ready(function () {
             data: {name: name, type: personType},
             success: function(data) {
                 console.log("Good");
-                name.val('');
+                $('#person_name').val('');
                 $("#alert").fadeTo(2000, 500).slideUp(500, function() {
                     $("#alert").slideUp(500);
                 });
