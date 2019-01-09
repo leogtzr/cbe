@@ -46,12 +46,13 @@ type PersonPayload struct {
 	Type string `json:"type"`
 }
 
-// InteractionPayload
+// InteractionPayload ...
 type InteractionPayload struct {
 	Comment  string `json:"comment"`
 	PersonID string `json:"personId"`
 }
 
+// Interaction ...
 type Interaction struct {
 	Person  string
 	Date    string
@@ -254,7 +255,6 @@ func readForm(r *http.Request) *PersonPayload {
 
 func addPerson(w http.ResponseWriter, r *http.Request) {
 	person := readForm(r)
-	fmt.Println("Going to add: ", person)
 
 	stmt, err := db.Prepare("INSERT INTO person (name, type) values(?, ?)")
 	if err != nil {
@@ -269,7 +269,6 @@ func addPerson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(person)
-	fmt.Println("Done ... ")
 }
 
 func addInteraction(w http.ResponseWriter, r *http.Request) {
