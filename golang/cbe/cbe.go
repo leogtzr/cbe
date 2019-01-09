@@ -40,6 +40,30 @@ type Route struct {
 	HandlerFunc http.HandlerFunc
 }
 
+// PersonPayload ...
+type PersonPayload struct {
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
+// InteractionPayload
+type InteractionPayload struct {
+	Comment  string `json:"comment"`
+	PersonID string `json:"personId"`
+}
+
+type Interaction struct {
+	Person  string
+	Date    string
+	Comment string
+}
+
+// Person ...
+type Person struct {
+	Name string
+	Age  string
+}
+
 // Routes ...
 type Routes []Route
 
@@ -74,6 +98,20 @@ var (
 			"GET",
 			"/familyinteractions",
 			BasicAuth(getFamilyInteractions, enterYourUserNamePassword),
+		},
+
+		Route{
+			"getFriendInteractions",
+			"GET",
+			"/friendinteractions",
+			BasicAuth(getFriendInteractions, enterYourUserNamePassword),
+		},
+
+		Route{
+			"getCoworkersInteractions",
+			"GET",
+			"/coworkersinteractions",
+			BasicAuth(getCoworkersInteractions, enterYourUserNamePassword),
 		},
 
 		Route{
@@ -113,7 +151,82 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(types)
 }
 
+func getInteractionsPerType(personType int) ([]Interaction, error) {
+	interactions := []Interaction{}
+
+	stmt, err := db.Prepare(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+	FROM interaction inter
+	inner join person p on p.id = inter.person_id
+	inner join person_type pt on pt.id = p.type
+	where p.type = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(personType)
+	if err != nil {
+		return nil, err
+	}
+
+	var person, date, comment string
+	for stmt.Next() {
+		rows.Scan(&person, &date, &comment)
+		interactions = append(interactions, Interaction{Person: person, Date: date, Comment: comment})
+	}
+
+	return interactions, nil
+}
+
 func getFamilyInteractions(w http.ResponseWriter, r *http.Request) {
+
+	interactions := []Interaction{}
+
+	rows, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+	FROM interaction inter
+	inner join person p on p.id = inter.person_id
+	inner join person_type pt on pt.id = p.type
+	where p.type = 1`)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var person, date, comment string
+	for rows.Next() {
+		rows.Scan(&person, &date, &comment)
+		interactions = append(interactions, Interaction{Person: person, Date: date, Comment: comment})
+	}
+
+	json.NewEncoder(w).Encode(interactions)
+}
+
+func getCoworkersInteractions(w http.ResponseWriter, r *http.Request) {
+
+	interactions := []struct {
+		Person, Date, Comment string
+	}{}
+
+	rows, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment
+	FROM interaction inter
+	inner join person p on p.id = inter.person_id
+	inner join person_type pt on pt.id = p.type
+	where p.type = 1`)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var person, date, comment string
+	for rows.Next() {
+		rows.Scan(&person, &date, &comment)
+		interactions = append(interactions, struct{ Person, Date, Comment string }{person, date, comment})
+	}
+
+	json.NewEncoder(w).Encode(interactions)
+}
+
+func getFriendInteractions(w http.ResponseWriter, r *http.Request) {
 
 	interactions := []struct {
 		Person, Date, Comment string
@@ -157,18 +270,6 @@ func getPersonTypes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(types)
-}
-
-// PersonPayload ...
-type PersonPayload struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
-// InteractionPayload
-type InteractionPayload struct {
-	Comment  string `json:"comment"`
-	PersonID string `json:"personId"`
 }
 
 func readForm(r *http.Request) *PersonPayload {
@@ -225,12 +326,6 @@ func addInteraction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(interaction)
-}
-
-// Person ...
-type Person struct {
-	Name string
-	Age  string
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
