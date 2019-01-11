@@ -68,6 +68,11 @@ type Person struct {
 	ID   string
 }
 
+// PersonType ...
+type PersonType struct {
+	ID, Type string
+}
+
 // PersonInfo ...
 type PersonInfo struct {
 	ID, Name, Type, TypeName string
@@ -192,26 +197,6 @@ func getPersonsPerType(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(persons)
 }
 
-func personInfo(id int) (PersonInfo, error) {
-	info := PersonInfo{}
-
-	stmt, err := db.Query(`
-	select p.id, p.name, pt.id, pt.type from person p
-	inner join person_type pt on pt.id = p.type
-	where p.id = ?`,
-		id)
-	if err != nil {
-		return PersonInfo{}, err
-	}
-	defer stmt.Close()
-
-	for stmt.Next() {
-		stmt.Scan(&info.ID, &info.Name, &info.Type, &info.TypeName)
-	}
-
-	return info, nil
-}
-
 func getPersonInformation(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	arg := vars["id"]
@@ -228,74 +213,6 @@ func getPersonInformation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(info)
-}
-
-func getInteractionsPerType(personType int) ([]Interaction, error) {
-	interactions := []Interaction{}
-
-	stmt, err := db.Query(`
-	select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment, inter.id
-	FROM interaction inter
-	inner join person p on p.id = inter.person_id
-	inner join person_type pt on pt.id = p.type
-	where p.type = ?`,
-		personType)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-
-	var person, date, comment, id string
-	for stmt.Next() {
-		stmt.Scan(&person, &date, &comment, &id)
-		interactions = append(interactions, Interaction{Person: person, Date: date, Comment: comment, ID: id})
-	}
-
-	return interactions, nil
-}
-
-func getInteractions(interactionID int) (Interaction, error) {
-	interaction := Interaction{}
-
-	stmt, err := db.Query(`
-	select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment, inter.id
-	FROM interaction inter
-	inner join person p on p.id = inter.person_id
-	inner join person_type pt on pt.id = p.type
-	where inter.id = ?`, interactionID)
-	if err != nil {
-		return Interaction{}, err
-	}
-	defer stmt.Close()
-
-	for stmt.Next() {
-		stmt.Scan(&interaction.Person, &interaction.Date, &interaction.Comment, &interaction.ID)
-	}
-
-	return interaction, nil
-}
-
-func personsPerType(personType int) ([]Person, error) {
-	persons := []Person{}
-
-	stmt, err := db.Query(`
-	select distinct(p.name), pt.type, p.id
-	FROM person p
-	inner join person_type pt on pt.id = p.type
-	where p.type = ?`,
-		personType)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-
-	var name, pt, id string
-	for stmt.Next() {
-		stmt.Scan(&name, &pt, &id)
-		persons = append(persons, Person{Name: name, Type: pt, ID: id})
-	}
-
-	return persons, nil
 }
 
 func getFamilyInteractions(w http.ResponseWriter, r *http.Request) {
@@ -326,22 +243,11 @@ func getFriendInteractions(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPersonTypes(w http.ResponseWriter, r *http.Request) {
-	types := []struct {
-		ID   string
-		Type string
-	}{}
-
-	rows, err := db.Query("SELECT id, type FROM person_type")
+	types, err := personTypes()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var tp, id string
-	for rows.Next() {
-		rows.Scan(&tp, &id)
-		types = append(types, struct{ ID, Type string }{tp, id})
-	}
-
 	json.NewEncoder(w).Encode(types)
 }
 
@@ -400,7 +306,6 @@ func addInteraction(w http.ResponseWriter, r *http.Request) {
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-	// person := Person{Age: "1", Name: "Foo"}
 	parsedTemplates, _ := template.ParseFiles("templates/index.html")
 	err := parsedTemplates.Execute(w, nil)
 	if err != nil {
@@ -410,7 +315,6 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func personasPage(w http.ResponseWriter, r *http.Request) {
-	// person := Person{Age: "1", Name: "Foo"}
 	parsedTemplates, _ := template.ParseFiles("templates/personas.html")
 	err := parsedTemplates.Execute(w, nil)
 	if err != nil {
