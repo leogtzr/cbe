@@ -68,6 +68,11 @@ type Person struct {
 	ID   string
 }
 
+// PersonInfo ...
+type PersonInfo struct {
+	ID, Name, Type, TypeName string
+}
+
 // Routes ...
 type Routes []Route
 
@@ -87,63 +92,63 @@ var (
 			"getPersonTypes",
 			"GET",
 			"/persontypes",
-			BasicAuth(getPersonTypes, enterYourUserNamePassword),
+			auth(getPersonTypes, enterYourUserNamePassword),
 		},
 
 		Route{
 			"getPersons",
 			"GET",
 			"/persons",
-			BasicAuth(getPersons, enterYourUserNamePassword),
+			auth(getPersons, enterYourUserNamePassword),
 		},
 
 		Route{
 			"getFamilyInteractions",
 			"GET",
 			"/familyinteractions",
-			BasicAuth(getFamilyInteractions, enterYourUserNamePassword),
+			auth(getFamilyInteractions, enterYourUserNamePassword),
 		},
 
 		Route{
 			"getFriendInteractions",
 			"GET",
 			"/friendinteractions",
-			BasicAuth(getFriendInteractions, enterYourUserNamePassword),
+			auth(getFriendInteractions, enterYourUserNamePassword),
 		},
 
 		Route{
 			"getCoworkersInteractions",
 			"GET",
 			"/coworkersinteractions",
-			BasicAuth(getCoworkersInteractions, enterYourUserNamePassword),
+			auth(getCoworkersInteractions, enterYourUserNamePassword),
 		},
 
 		Route{
 			"getPersonsPerType",
 			"GET",
 			"/personspertype/{type}",
-			BasicAuth(getPersonsPerType, enterYourUserNamePassword),
+			auth(getPersonsPerType, enterYourUserNamePassword),
 		},
 
 		Route{
 			"getPersonsInfo",
 			"GET",
 			"/personinfo/{id}",
-			BasicAuth(getPersonInformation, enterYourUserNamePassword),
+			auth(getPersonInformation, enterYourUserNamePassword),
 		},
 
 		Route{
 			"addPerson",
 			"POST",
 			"/addperson",
-			BasicAuth(addPerson, enterYourUserNamePassword),
+			auth(addPerson, enterYourUserNamePassword),
 		},
 
 		Route{
 			"addInteraction",
 			"POST",
 			"/addinteraction",
-			BasicAuth(addInteraction, enterYourUserNamePassword),
+			auth(addInteraction, enterYourUserNamePassword),
 		},
 	}
 )
@@ -187,17 +192,14 @@ func getPersonsPerType(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(persons)
 }
 
-// PersonInfo ...
-type PersonInfo struct {
-	ID, Name, Type, TypeName string
-}
-
 func personInfo(id int) (PersonInfo, error) {
 	info := PersonInfo{}
 
-	stmt, err := db.Query(`select p.id, p.name, pt.id, pt.type from person p
+	stmt, err := db.Query(`
+	select p.id, p.name, pt.id, pt.type from person p
 	inner join person_type pt on pt.id = p.type
-	where p.id = ?`, id)
+	where p.id = ?`,
+		id)
 	if err != nil {
 		return PersonInfo{}, err
 	}
@@ -231,11 +233,13 @@ func getPersonInformation(w http.ResponseWriter, r *http.Request) {
 func getInteractionsPerType(personType int) ([]Interaction, error) {
 	interactions := []Interaction{}
 
-	stmt, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment, inter.id
+	stmt, err := db.Query(`
+	select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment, inter.id
 	FROM interaction inter
 	inner join person p on p.id = inter.person_id
 	inner join person_type pt on pt.id = p.type
-	where p.type = ?`, personType)
+	where p.type = ?`,
+		personType)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +257,8 @@ func getInteractionsPerType(personType int) ([]Interaction, error) {
 func getInteractions(interactionID int) (Interaction, error) {
 	interaction := Interaction{}
 
-	stmt, err := db.Query(`select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment, inter.id
+	stmt, err := db.Query(`
+	select concat(p.name, ' (', pt.type, ')') person,inter.date, inter.comment, inter.id
 	FROM interaction inter
 	inner join person p on p.id = inter.person_id
 	inner join person_type pt on pt.id = p.type
@@ -273,10 +278,12 @@ func getInteractions(interactionID int) (Interaction, error) {
 func personsPerType(personType int) ([]Person, error) {
 	persons := []Person{}
 
-	stmt, err := db.Query(`select distinct(p.name), pt.type, p.id
+	stmt, err := db.Query(`
+	select distinct(p.name), pt.type, p.id
 	FROM person p
 	inner join person_type pt on pt.id = p.type
-	where p.type = ?`, personType)
+	where p.type = ?`,
+		personType)
 	if err != nil {
 		return nil, err
 	}
@@ -460,8 +467,7 @@ func interactionInfoPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// BasicAuth ...
-func BasicAuth(handler http.HandlerFunc, realm string) http.HandlerFunc {
+func auth(handler http.HandlerFunc, realm string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, pass, ok := r.BasicAuth()
 		if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(cbeUser)) != 1 ||
@@ -530,10 +536,10 @@ func main() {
 
 	defer db.Close()
 
-	router.HandleFunc("/", BasicAuth(homePage, enterYourUserNamePassword))
-	router.HandleFunc("/personas", BasicAuth(personasPage, enterYourUserNamePassword))
-	router.HandleFunc("/person/{id}", BasicAuth(personInfoPage, enterYourUserNamePassword))
-	router.HandleFunc("/interaction/{id}", BasicAuth(interactionInfoPage, enterYourUserNamePassword))
+	router.HandleFunc("/", auth(homePage, enterYourUserNamePassword))
+	router.HandleFunc("/personas", auth(personasPage, enterYourUserNamePassword))
+	router.HandleFunc("/person/{id}", auth(personInfoPage, enterYourUserNamePassword))
+	router.HandleFunc("/interaction/{id}", auth(interactionInfoPage, enterYourUserNamePassword))
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("static/"))))
 
