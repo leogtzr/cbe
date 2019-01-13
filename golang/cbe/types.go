@@ -62,7 +62,7 @@ type PersonType struct {
 
 // PersonInfo ...
 type PersonInfo struct {
-	ID, Name, Type, TypeName string
+	ID, Name, Type, TypeName, EveryDays string
 }
 
 // Routes ...

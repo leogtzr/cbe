@@ -72,7 +72,7 @@ func personInfo(id int) (PersonInfo, error) {
 	info := PersonInfo{}
 
 	stmt, err := db.Query(`
-	select p.id, p.name, pt.id, pt.type from person p
+	select p.id, p.name, pt.id, pt.type, p.everydays from person p
 	inner join person_type pt on pt.id = p.type
 	where p.id = ?`,
 		id)
@@ -82,7 +82,7 @@ func personInfo(id int) (PersonInfo, error) {
 	defer stmt.Close()
 
 	for stmt.Next() {
-		stmt.Scan(&info.ID, &info.Name, &info.Type, &info.TypeName)
+		stmt.Scan(&info.ID, &info.Name, &info.Type, &info.TypeName, &info.EveryDays)
 	}
 
 	return info, nil
