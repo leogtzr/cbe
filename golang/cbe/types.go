@@ -38,6 +38,7 @@ type PersonPayload struct {
 type InteractionPayload struct {
 	Comment  string `json:"comment"`
 	PersonID string `json:"personId"`
+	Date     string `json:"date"`
 }
 
 // Interaction ...

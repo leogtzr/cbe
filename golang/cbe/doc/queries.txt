@@ -43,3 +43,11 @@ where p.type = 1;
 select * from person p
 inner join person_type pt on pt.id = p.type
 where p.id = 5;
+
+SELECT count(*) c FROM interaction inter
+inner join person p on p.id = inter.person_id
+WHERE date >= NOW() - INTERVAL 10 DAY;
+
+SELECT count(*) c FROM interaction inter
+inner join person p on p.id = inter.person_id
+WHERE date >= NOW() - INTERVAL 10 DAY and p.id = 1;

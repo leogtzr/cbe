@@ -159,13 +159,13 @@ func addInteraction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO interaction (comment, date, person_id) VALUES(?, date(now()), ?)")
+	stmt, err := db.Prepare("INSERT INTO interaction (comment, date, person_id) VALUES(?, ?, ?)")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(interaction.Comment, interaction.PersonID)
+	_, err = stmt.Exec(interaction.Comment, interaction.Date, interaction.PersonID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

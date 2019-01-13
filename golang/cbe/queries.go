@@ -105,3 +105,23 @@ func personTypes() ([]PersonType, error) {
 
 	return personTypes, nil
 }
+
+func numberOfInteractionsSince(days, id int) (int, error) {
+	stmt, err := db.Query(`
+	SELECT COUNT(*) c FROM interaction inter
+	INNER JOIN person p on p.id = inter.person_id
+	WHERE date >= NOW() - INTERVAL ? DAY and p.id = ?`,
+		days, id)
+	if err != nil {
+		return -1, err
+	}
+	defer stmt.Close()
+
+	var count int
+	for stmt.Next() {
+		// stmt.Scan(&info.ID, &info.Name, &info.Type, &info.TypeName, &info.EveryDays)
+		stmt.Scan(&count)
+	}
+
+	return -1, nil
+}

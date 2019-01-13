@@ -3,6 +3,17 @@ $(document).ready(function () {
     $('#alert').hide();
     $('#alert_error').hide();
 
+    if ($('#date').length) {
+        $('#date').datepicker({
+            format: "yyyy/mm/dd",
+            weekStart: 1,
+            todayBtn: "linked",
+            todayHighlight: true
+        });
+    }
+
+    $(".today").click();
+
     var persontypes = $('#persontypes');
     if (persontypes.length) {
         $.ajax({
@@ -228,11 +239,12 @@ $(document).ready(function () {
         e.preventDefault();
         var text = $('#interactiontext').val();
         var personId = $('#persons').find(":selected").attr('name');
+        var date = $('#date').val();
 
         $.ajax({
             url: '/addinteraction',
             type: 'POST',
-            data: {personId: personId, comment: text},
+            data: {personId: personId, comment: text, date: date},
             success: function(data) {
                 $('#interactiontext').val('');
                 $("#alert").fadeTo(2000, 500).slideUp(500, function() {
