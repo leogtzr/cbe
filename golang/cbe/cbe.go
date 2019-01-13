@@ -16,6 +16,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
+
+	"regexp"
 )
 
 func getPersons(w http.ResponseWriter, r *http.Request) {
@@ -111,6 +113,13 @@ func getPersonTypes(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(types)
 }
 
+func extractDaysFromString(dayText string) string {
+	re := regexp.MustCompile("[0-9]+")
+	daysMatches := re.FindAllString(dayText, -1)
+
+	return daysMatches[0]
+}
+
 func readForm(r *http.Request) *PersonPayload {
 	r.ParseForm()
 	person := new(PersonPayload)
@@ -125,13 +134,13 @@ func readForm(r *http.Request) *PersonPayload {
 func addPerson(w http.ResponseWriter, r *http.Request) {
 	person := readForm(r)
 
-	stmt, err := db.Prepare("INSERT INTO person (name, type) values(?, ?)")
+	stmt, err := db.Prepare("INSERT INTO person (name, type, everydays) values(?, ?, ?)")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(person.Name, person.Type)
+	_, err = stmt.Exec(person.Name, person.Type, extractDaysFromString(person.EveryDays))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

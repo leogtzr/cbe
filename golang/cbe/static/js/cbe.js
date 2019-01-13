@@ -198,11 +198,12 @@ $(document).ready(function () {
         e.preventDefault();
         var name = $('#person_name').val();
         var personType = $('#persontypes').find(":selected").attr('name');
+        var everydays = $('#interacteverydays').find(":selected").val();
 
         $.ajax({
             url: '/addperson',
             type: 'POST',
-            data: {name: name, type: personType},
+            data: {name: name, type: personType, everydays: everydays},
             success: function(data) {
                 console.log("Good");
                 $('#person_name').val('');
@@ -212,6 +213,7 @@ $(document).ready(function () {
             },
             error: function(data) {
                 console.log("Error!");
+                console.log(data);
                 $("#alert_error").fadeTo(2000, 500).slideUp(500, function() {
                     $("#alert_error").slideUp(500);
                 });
