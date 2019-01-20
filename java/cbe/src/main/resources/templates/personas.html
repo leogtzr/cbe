@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>CBE - personas</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/cbe.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/personas">Personas</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/stats">Stats</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                </li> -->
+                <!-- <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li> -->
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <main role="main">
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-lg-8">
+                        <h3>¿Quiénes son los que más te importan?</h3>
+                        <form method="post" id="addperson">
+                            <div class="form-group">
+                                <label for="person_name">Nombre</label>
+                                <input type="text" class="form-control" id="person_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="persontypes">Tipo (familiar, amigo, trabajo, etc ...)</label>
+                                <select class="form-control" id="persontypes" required></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="interacteverydays">¿Cada cuándo interactuarás con esta persona?</label>
+                                <select class="form-control" id="interacteverydays" required>
+                                    <option>1 days</option>
+                                    <option>2 days</option>
+                                    <option>3 days</option>
+                                    <option>4 days</option>
+                                    <option>5 days</option>
+                                    <option>6 days</option>
+                                    <option>7 days</option>
+                                    <option>8 days</option>
+                                    <option>9 days</option>
+                                    <option>10 days</option>
+                                    <option>11 days</option>
+                                    <option>12 days</option>
+                                    <option>13 days</option>
+                                    <option>14 days</option>
+                                    <option>15 days</option>
+                                    <option>16 days</option>
+                                    <option>17 days</option>
+                                    <option>18 days</option>
+                                    <option>19 days</option>
+                                    <option>20 days</option>
+                                    <option>21 days</option>
+                                    <option>22 days</option>
+                                    <option>23 days</option>
+                                    <option>24 days</option>
+                                    <option>25 days</option>
+                                    <option>26 days</option>
+                                    <option>27 days</option>
+                                    <option>28 days</option>
+                                    <option>29 days</option>
+                                    <option>30 days</option>   
+                                </select>
+                            </div>
+
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="alert_error">
+                                    <strong>Error agregando persona</strong>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert">
+                                 Agregado correctamente
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Amigos</h2>
+                    <ul class="list-group list-group-flush" id="family">
+                        <!-- <li class="list-group-item">Cras justo odio</li> -->
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2>Familiares</h2>
+                    <ul class="list-group list-group-flush" id="friends">
+                        <!-- <li class="list-group-item">Cras justo odio</li> -->
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2>Trabajo</h2>
+                    <ul class="list-group list-group-flush" id="coworkers">
+                        <!-- <li class="list-group-item">Cras justo odio</li> -->
+                    </ul>
+                </div>
+            </div>
+
+            <hr>
+
+        </div> <!-- /container -->
+
+    </main>
+
+    <footer class="container">
+        <p>&copy; CBE 2019</p>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+================================================== -->
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/cbe.js}"></script>
+</body>
+
+</html>

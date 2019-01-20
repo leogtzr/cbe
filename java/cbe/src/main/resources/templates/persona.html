@@ -13,7 +13,7 @@
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/static/css/cbe.css" rel="stylesheet">
+    <link href="/static/css/jumbotron.css" rel="stylesheet">
 </head>
 
 <body>
@@ -66,16 +66,16 @@
                         <table class="table">
                             <thead>
                               <tr>
-                                <th scope="col">Person</th>
-                                <th scope="col">Comment</th>
-                                <th scope="col">Date</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Cada cuando</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                <td>{{.Person}}</td>
-                                <td>{{.Comment}}</td>
-                                <td>{{.Date}}</td>
+                                <td>{{.Name}}</td>
+                                <td>{{.TypeName}}</td>
+                                <td>{{.EveryDays}}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -121,10 +121,10 @@
 
     <!-- Bootstrap core JavaScript
 ================================================== -->
-    <script src="/static/js/popper.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/js/cbe.js"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/cbe.js}"></script>
 </body>
 
 </html>
